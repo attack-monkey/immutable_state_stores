@@ -200,7 +200,7 @@ state().set({x: 3, y: 5});
 on($('#button'), 'click', () => {
   
   // log where the event is happening
-  debug().log('Button click in myComponent');
+  debug().log('Button click in myComponent...');
   
   // Update the state-stack and log
   state().set(
@@ -212,6 +212,26 @@ on($('#button'), 'click', () => {
     iu(getState(), 'y', getState().y + getState().x)
   );
 });
+
+/*
+console.log...
+
+Button click in myComponent...
+
+Unshifting new state into Store...
+Store: [
+  {"x":4,"y":5},
+  {"x":3,"y":5}
+]
+
+Unshifting new state into Store...
+Store: [
+  {"x":4,"y":9},
+  {"x":4,"y":5},
+  {"x":3,"y":5}
+]
+
+*/
 
 ```
 
