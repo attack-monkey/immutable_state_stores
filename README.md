@@ -152,7 +152,7 @@ In Zeron we can directly access the current state with `getState()` and unshift 
 
 Zeron also has a debug mode that is turned on with `debug().on()`. Zeron's Debugger `console.logs` any state changes when set to on.
 
-Put all this together and it makes it extremely easy to monitor state changes, and the functions that cause them.
+Put all this together and it makes it extremely easy to monitor state changes.
 
 ```javascript
 
