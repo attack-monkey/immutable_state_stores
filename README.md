@@ -236,3 +236,8 @@ Store: [
 ```
 
 To turn off the debugging, just comment out or remove the `debug().on()` statement.
+To limit Store to x number of states - `store().maxLength(5)` 
+
+## Conclusion
+
+A single Immutable State Store is an elegant way to manage application state. State belongs in one place, errors become harder to make, and easier to track down :)
