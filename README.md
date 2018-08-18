@@ -68,5 +68,151 @@ y.unshift(y[0] + x[0]);
 
 ## State in a Single Store
 
+If we store all state in a single place, we can keep track of how the whole program-state changes over time.
 
+```javascript
 
+const store = [{x: 3, y: 5}];
+
+store.unshift(Object.assign({}, getState(), { x: getState().x + 1 }));
+
+store.unshift(Object.assign({}, getState(), { y: getState().y + getState().x }));
+
+function getState() { return store[0]; }
+
+/* 
+store = [
+  {"x":4,"y":9},
+  {"x":4,"y":5},
+  {"x":3,"y":5}
+]
+*/
+
+```
+
+The only down-side is that immutably updating objects can be very verbose and fiddly. The more deeply in an object that you make the update, the more cumbersome it gets.
+
+For example, if we were to immutably update 
+
+```
+{
+  deep: {
+    nested: "object"
+  }
+}
+```
+
+to 
+
+```
+{
+  deep: {
+    nested: "monkey"
+  }
+}
+```
+
+We would need to do the following...
+
+```javascript
+
+const a = {
+  deep: {
+    nested: "object"
+  }
+};
+
+const a1 = Object.assign({}, a, {
+  deep: Object.assign({}, a.deep, {
+    nested: "monkey"
+  })
+});
+
+```
+
+## Zeron
+
+Zeron is a functional frontend framework and provides the `iu` (immutable update) utility function for immutably updating objects. To do the above with Zeron's `iu` function looks like...
+
+```javascript
+
+const a = {
+  deep: {
+    nested: "object"
+  }
+};
+
+const a1 = iu(a, 'deep/nested', 'monkey');
+
+```
+
+`iu` takes the starting object, the node to update, and the value to update the node to.
+
+In Zeron we can directly access the current state with `getState()` and unshift a new state onto the Store with `state().set()`.
+
+Zeron also has a debug mode that is turned on with `debug().on()`. Zeron's Debugger `console.logs` any state changes when set to on.
+
+Put all this together and it makes it extremely easy to monitor state changes, and the functions that cause them.
+
+```javascript
+
+debug().on();
+
+state().set({x: 3, y: 5});
+
+state().set(
+  iu(getState(), 'x', getState().x + 1)
+);
+
+state().set(
+  iu(getState(), 'y', getState().y + getState().x)
+)
+
+/*
+console.log...
+
+Unshifting new state into Store...
+Store: [
+  {"x":4,"y":5},
+  {"x":3,"y":5}
+]
+
+Unshifting new state into Store...
+Store: [
+  {"x":4,"y":9},
+  {"x":4,"y":5},
+  {"x":3,"y":5}
+]
+
+*/
+
+```
+
+By also debug-logging on the functions that cause the state change - we can make it extemely easy to debug state related issues.
+
+```javascript
+
+debug().on();
+
+state().set({x: 3, y: 5});
+
+// on button click
+on($('#button'), 'click', () => {
+  
+  // log where the event is happening
+  debug().log('Button click in myComponent');
+  
+  // Update the state-stack and log
+  state().set(
+    iu(getState(), 'x', getState().x + 1)
+  );
+
+  // Update the state-stack again and log
+  state().set(
+    iu(getState(), 'y', getState().y + getState().x)
+  );
+});
+
+```
+
+To turn off the debugging, just comment out or remove the `debug().on()` statement.
