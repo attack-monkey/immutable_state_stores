@@ -1,5 +1,5 @@
 # Immutable State Stores  
-_... and why using immutable state stores is a good idea_
+_... and why using immutable state stores are a good idea_
 
 ## Imperative
 
